@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PowerDJ Web</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="logo">⏻</span> POWER<b>DJ</b> <small>web</small></div>
+    <div class="top-center">
+      <button id="btnRec" class="rec-btn" title="믹스 녹음 (webm)"><i></i> REC</button>
+      <span id="recTime" class="rec-time">00:00</span>
+      <div class="zoom-ctl">
+        <span>ZOOM</span>
+        <button id="zoomOut" title="파형 축소">−</button>
+        <button id="zoomIn" title="파형 확대">+</button>
+      </div>
+    </div>
+    <div class="top-right">
+      <span id="engineState" class="engine-state">오디오 대기 중 — 아무 곳이나 클릭하세요</span>
+      <button id="btnHelp">⌨ 단축키</button>
+    </div>
+  </header>
+
+  <section class="waves">
+    <div class="zoomwave" data-deck="A"><canvas></canvas><span class="wave-tag">A</span></div>
+    <div class="zoomwave" data-deck="B"><canvas></canvas><span class="wave-tag">B</span></div>
+  </section>
+
+  <main class="console">
+    <section class="deck" id="deckA" data-deck="A"></section>
+
+    <section class="mixer">
+      <div class="mix-channels">
+        <div class="channel" data-deck="A">
+          <div class="knobs"></div>
+          <div class="fader-row">
+            <div class="vu"><div class="vu-cover"></div></div>
+            <div class="ch-fader"></div>
+          </div>
+          <div class="ch-label">A</div>
+        </div>
+
+        <div class="mix-center">
+          <div class="master-knob"></div>
+          <div class="master-vu">
+            <div class="vu" id="vuL"><div class="vu-cover"></div></div>
+            <div class="vu" id="vuR"><div class="vu-cover"></div></div>
+          </div>
+          <div class="mix-sub">MASTER</div>
+          <select id="xfCurve" title="크로스페이더 커브">
+            <option value="smooth">Smooth</option>
+            <option value="dipless">Dipless</option>
+            <option value="cut">Cut (스크래치)</option>
+          </select>
+        </div>
+
+        <div class="channel" data-deck="B">
+          <div class="knobs"></div>
+          <div class="fader-row">
+            <div class="ch-fader"></div>
+            <div class="vu"><div class="vu-cover"></div></div>
+          </div>
+          <div class="ch-label">B</div>
+        </div>
+      </div>
+      <div class="xfader-wrap">
+        <span class="xf-a">A</span>
+        <div id="xfader"></div>
+        <span class="xf-b">B</span>
+      </div>
+    </section>
+
+    <section class="deck" id="deckB" data-deck="B"></section>
+  </main>
+
+  <section class="bottom">
+    <div class="sampler">
+      <div class="panel-head"><h3>SAMPLER</h3><div class="sampler-vol"></div></div>
+      <div class="pads">
+        <button class="pad" data-sample="horn"><b>AIR HORN</b><small>G</small></button>
+        <button class="pad" data-sample="siren"><b>SIREN</b><small>H</small></button>
+        <button class="pad" data-sample="laser"><b>LASER</b><small>J</small></button>
+        <button class="pad" data-sample="drop"><b>BASS DROP</b><small>K</small></button>
+      </div>
+    </div>
+
+    <div class="library" id="library">
+      <div class="panel-head">
+        <h3>LIBRARY</h3>
+        <input type="search" id="libSearch" placeholder="제목 / 아티스트 / BPM 검색">
+        <label class="btn-file">+ 음악 추가<input type="file" id="fileInput" accept="audio/*" multiple hidden></label>
+      </div>
+      <div class="lib-table-wrap">
+        <table class="lib">
+          <thead>
+            <tr>
+              <th class="c-num">#</th>
+              <th data-sort="title">제목</th>
+              <th data-sort="artist">아티스트</th>
+              <th data-sort="bpm" class="c-bpm">BPM</th>
+              <th data-sort="duration" class="c-dur">길이</th>
+              <th class="c-load">로드</th>
+            </tr>
+          </thead>
+          <tbody id="libBody"></tbody>
+        </table>
+        <div class="lib-drop">🎵 MP3 · WAV · M4A · OGG 파일을 여기로 끌어다 놓으세요</div>
+      </div>
+    </div>
+  </section>
+
+  <div id="toast" class="toast"></div>
+
+  <div id="helpModal" class="modal" hidden>
+    <div class="modal-box">
+      <h2>키보드 단축키</h2>
+      <div class="help-grid">
+        <div>
+          <h4 class="ca">DECK A</h4>
+          <p><kbd>Q</kbd> 재생/일시정지</p>
+          <p><kbd>W</kbd> CUE (누르고 있으면 미리듣기)</p>
+          <p><kbd>E</kbd> SYNC</p>
+          <p><kbd>1</kbd>–<kbd>4</kbd> 핫큐 (Shift = 삭제)</p>
+          <p><kbd>A</kbd> 4비트 루프</p>
+          <p><kbd>Z</kbd> / <kbd>X</kbd> 피치 벤드 − / +</p>
+        </div>
+        <div>
+          <h4 class="cb">DECK B</h4>
+          <p><kbd>P</kbd> 재생/일시정지</p>
+          <p><kbd>O</kbd> CUE (누르고 있으면 미리듣기)</p>
+          <p><kbd>I</kbd> SYNC</p>
+          <p><kbd>7</kbd>–<kbd>0</kbd> 핫큐 (Shift = 삭제)</p>
+          <p><kbd>L</kbd> 4비트 루프</p>
+          <p><kbd>N</kbd> / <kbd>M</kbd> 피치 벤드 − / +</p>
+        </div>
+        <div>
+          <h4>MIXER</h4>
+          <p><kbd>←</kbd> / <kbd>→</kbd> 크로스페이더</p>
+          <p><kbd>↓</kbd> 크로스페이더 센터</p>
+          <p><kbd>G</kbd> <kbd>H</kbd> <kbd>J</kbd> <kbd>K</kbd> 샘플러</p>
+        </div>
+        <div>
+          <h4>마우스</h4>
+          <p>노브: 위/아래 드래그, 휠, 더블클릭 = 리셋</p>
+          <p>페이더: 드래그, 더블클릭 = 리셋</p>
+          <p>플래터: 드래그 = 스크래치 / 피치 벤드</p>
+          <p>파형: 드래그 = 탐색, 휠 = 줌</p>
+          <p>핫큐: 우클릭 = 삭제</p>
+        </div>
+      </div>
+      <button id="helpClose">닫기</button>
+    </div>
+  </div>
+
+  <template id="deckTpl">
+    <div class="deck-head">
+      <div class="deck-letter"></div>
+      <div class="deck-meta">
+        <div class="deck-title">트랙을 끌어다 놓으세요</div>
+        <div class="deck-artist">—</div>
+      </div>
+      <div class="deck-bpm"><span class="bpm-val">---.-</span><small>BPM</small></div>
+    </div>
+    <div class="deck-times">
+      <span class="t-elapsed">0:00.0</span>
+      <span class="pitch-val">0.00%</span>
+      <span class="t-remain">-0:00.0</span>
+    </div>
+    <canvas class="overview"></canvas>
+    <div class="deck-body">
+      <div class="platter-wrap">
+        <div class="platter">
+          <div class="platter-disc"><div class="platter-mark"></div><div class="platter-label"></div></div>
+        </div>
+        <div class="beat-leds"><i></i><i></i><i></i><i></i></div>
+        <div class="deck-toggles">
+          <button data-act="vinyl" class="small">VINYL</button>
+          <button data-act="quant" class="small">QUANT</button>
+        </div>
+      </div>
+      <div class="pitch-col">
+        <span class="pitch-lbl">−</span>
+        <div class="pitch-fader"></div>
+        <span class="pitch-lbl">+</span>
+        <select class="pitch-range" title="피치 범위">
+          <option value="0.08">±8%</option>
+          <option value="0.16">±16%</option>
+          <option value="0.5">±50%</option>
+        </select>
+        <div class="bend">
+          <button data-act="bend-" class="small" title="피치 벤드 −">◀</button>
+          <button data-act="bend+" class="small" title="피치 벤드 +">▶</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="row-label">HOT CUE</div>
+    <div class="hotcues">
+      <button data-act="hc" data-i="0">1</button>
+      <button data-act="hc" data-i="1">2</button>
+      <button data-act="hc" data-i="2">3</button>
+      <button data-act="hc" data-i="3">4</button>
+    </div>
+
+    <div class="row-label">LOOP</div>
+    <div class="loops">
+      <button data-act="loop" data-beats="1">1</button>
+      <button data-act="loop" data-beats="2">2</button>
+      <button data-act="loop" data-beats="4">4</button>
+      <button data-act="loop" data-beats="8">8</button>
+      <button data-act="loop" data-beats="16">16</button>
+      <button data-act="loophalf" title="루프 절반">½</button>
+      <button data-act="loopdouble" title="루프 두 배">×2</button>
+    </div>
+    <div class="loops">
+      <button data-act="loopin">IN</button>
+      <button data-act="loopout">OUT</button>
+      <button data-act="loopexit">EXIT</button>
+      <button data-act="jump" data-beats="-4" title="4비트 뒤로">◀◀ 4</button>
+      <button data-act="jump" data-beats="4" title="4비트 앞으로">4 ▶▶</button>
+    </div>
+
+    <div class="row-label">FX</div>
+    <div class="fx">
+      <select class="fx-type">
+        <option value="echo">Echo</option>
+        <option value="reverb">Reverb</option>
+        <option value="flanger">Flanger</option>
+      </select>
+      <select class="fx-beats" title="비트 길이">
+        <option value="0.25">1/4</option>
+        <option value="0.5" selected>1/2</option>
+        <option value="0.75">3/4</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+      </select>
+      <div class="fx-knob"></div>
+      <button data-act="fxon" class="fx-on">ON</button>
+    </div>
+
+    <div class="transport">
+      <button data-act="cue" class="t-cue">CUE</button>
+      <button data-act="play" class="t-play">▶︎❚❚</button>
+      <button data-act="sync" class="t-sync">SYNC</button>
+      <button data-act="tap" class="t-tap">TAP</button>
+    </div>
+  </template>
+
+  <script src="js/analysis.js"></script>
+  <script src="js/deck.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
